@@ -62,6 +62,10 @@ public class SecondarySort extends Configured implements Tool {
 
 		/** mapper输出的key类型和mapper输入的key类型不一样，需要指定输出的key的java class */
 		conf.setMapOutputKeyClass(Pair.class);
+		conf.setMapOutputValueClass(NullWritable.class);
+		conf.setOutputKeyClass(IntWritable.class);
+		conf.setOutputValueClass(Text.class);
+		
 		/** 取样器 */
 		InputSampler.Sampler<Pair, NullWritable> sampler = new InputSampler.RandomSampler<Pair, NullWritable>(
 				0.1, 200, 2);
