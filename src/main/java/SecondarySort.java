@@ -18,11 +18,11 @@ import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapred.MapReduceBase;
 import org.apache.hadoop.mapred.Mapper;
 import org.apache.hadoop.mapred.OutputCollector;
+import org.apache.hadoop.mapred.Partitioner;
 import org.apache.hadoop.mapred.Reducer;
 import org.apache.hadoop.mapred.Reporter;
 import org.apache.hadoop.mapred.lib.InputSampler;
 import org.apache.hadoop.mapred.lib.TotalOrderPartitioner;
-import org.apache.hadoop.mapred.Partitioner;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
@@ -178,14 +178,12 @@ public class SecondarySort extends Configured implements Tool {
 			super(Pair.class, true);
 		}
 
-		public int compare(WritableComparable w1, WritableComparable w2) {
-			Pair p1 = (Pair) w1;
-			Pair p2 = (Pair) w2;
-			int cmp = p1.getFirst() - p2.getFirst();
+		public int compare(Pair w1, Pair w2) {
+			int cmp = w1.getFirst() - w2.getFirst();
 			if (cmp != 0) {
 				return cmp;
 			}
-			return -1 * (p1.getSecond().compareTo(p2.getSecond()));
+			return -1 * (w1.getSecond().compareTo(w2.getSecond()));
 		}
 	}
 
@@ -194,17 +192,14 @@ public class SecondarySort extends Configured implements Tool {
 			super(Pair.class, true);
 		}
 
-		public int compare(WritableComparable w1, WritableComparable w2) {
-			Pair p1 = (Pair) w1;
-			Pair p2 = (Pair) w2;
-
-			return p1.getFirst() - p2.getFirst();
+		public int compare(Pair w1, Pair w2) {
+			return w1.getFirst() - w2.getFirst();
 		}
 	}
 
 	static class FirstPartitioner implements
-			Partitioner<SecondarySort.Pair, NullWritable> {
-		public int getPartition(SecondarySort.Pair key, NullWritable value,
+			Partitioner<Pair, NullWritable> {
+		public int getPartition(Pair key, NullWritable value,
 				int numPartitions) {
 			return Math.abs(key.getFirst() * 127) % numPartitions;
 		}
