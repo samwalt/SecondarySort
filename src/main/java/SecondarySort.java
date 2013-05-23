@@ -101,13 +101,13 @@ public class SecondarySort extends Configured implements Tool {
 	}
 
 	static class OrderReducer extends MapReduceBase implements
-			Reducer<IntWritable, Text, IntWritable, Text> {
+			Reducer<Pair, NullWritable, IntWritable, Text> {
 
-		public void reduce(IntWritable key, Iterator<Text> values,
+		public void reduce(Pair key, Iterator<NullWritable> values,
 				OutputCollector<IntWritable, Text> output, Reporter reporter)
 				throws IOException {
 			while (values.hasNext()) {
-				output.collect(key, values.next());
+				output.collect(new IntWritable(key.getFirst()), new Text(key.getSecond()));
 			}
 		}
 	}
@@ -172,8 +172,6 @@ public class SecondarySort extends Configured implements Tool {
 
 	}
 
-	
-
 	static class KeyComparator extends WritableComparator {
 
 		protected KeyComparator() {
@@ -187,7 +185,7 @@ public class SecondarySort extends Configured implements Tool {
 			if (cmp != 0) {
 				return cmp;
 			}
-			return -p1.getSecond().compareTo(p2.getSecond());
+			return -1 * (p1.getSecond().compareTo(p2.getSecond()));
 		}
 	}
 
@@ -203,13 +201,15 @@ public class SecondarySort extends Configured implements Tool {
 			return p1.getFirst() - p2.getFirst();
 		}
 	}
-}
 
-class FirstPartitioner implements Partitioner<SecondarySort.Pair, NullWritable> {
-	public int getPartition(SecondarySort.Pair key, NullWritable value, int numPartitions) {
-		return Math.abs(key.getFirst() * 127) % numPartitions;
-	}
+	static class FirstPartitioner implements
+			Partitioner<SecondarySort.Pair, NullWritable> {
+		public int getPartition(SecondarySort.Pair key, NullWritable value,
+				int numPartitions) {
+			return Math.abs(key.getFirst() * 127) % numPartitions;
+		}
 
-	public void configure(JobConf job) {
+		public void configure(JobConf job) {
+		}
 	}
 }
