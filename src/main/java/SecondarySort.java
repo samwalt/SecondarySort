@@ -116,7 +116,7 @@ public class SecondarySort extends Configured implements Tool {
 		}
 	}
 
-	static class Pair implements WritableComparable<Pair> {
+	public static class Pair implements WritableComparable<Pair> {
 
 		int first;
 		String second;
@@ -176,7 +176,7 @@ public class SecondarySort extends Configured implements Tool {
 
 	}
 
-	static class KeyComparator extends WritableComparator {
+	public static class KeyComparator extends WritableComparator {
 
 		protected KeyComparator() {
 			super(Pair.class, true);
@@ -191,7 +191,7 @@ public class SecondarySort extends Configured implements Tool {
 		}
 	}
 
-	static class GroupComparator extends WritableComparator {
+	public static class GroupComparator extends WritableComparator {
 		protected GroupComparator() {
 			super(Pair.class, true);
 		}
@@ -201,7 +201,7 @@ public class SecondarySort extends Configured implements Tool {
 		}
 	}
 
-	static class FirstPartitioner implements
+	public static class FirstPartitioner implements
 			Partitioner<Pair, NullWritable> {
 		public int getPartition(Pair key, NullWritable value,
 				int numPartitions) {
